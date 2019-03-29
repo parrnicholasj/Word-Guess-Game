@@ -1,15 +1,16 @@
 var tries = 5;
 var lettersGuessed = [];
-var wins;
-var losses;
+var wins = 0;
+var losses = 0;
 var userGuess;
 var wordPool = ["doom", "argent", "energy", "marine", "demons"]
 var word = "test";
 var wordArray = [];
-var gameOn = false; //need to update this later
-
+var gameOn = false;
+var resetGame = false;
 var $game = document.getElementById("game");
 var $holder = document.getElementById("holder");
+var charsToWin;
 
 document.onkeyup = function (event) {
   if (gameOn) {
@@ -17,7 +18,6 @@ document.onkeyup = function (event) {
     userGuess = event.key.toLowerCase(); //set to lower case so no capitals problem
 
 
-    lettersGuessed.push(userGuess); //add key to array
 
     //var $game = document.getElementById("game");
     $game.textContent = "You guessed " + userGuess; //tell what they just guessed
@@ -31,45 +31,92 @@ document.onkeyup = function (event) {
     //check if correct letter chosen
     if (word.includes(userGuess)) {
 
-      //get indexes of where the characters are
+      //get indexes of where the characters are and put letters in correct boxes
+      if (!lettersGuessed.includes(userGuess)) {
+        for (var i = 0; i < wordArray.length; i++) {
 
-      for (var i = 0; i < wordArray.length; i++) {
+          if (wordArray[i] === userGuess) {
 
-        if (wordArray[i] === userGuess) {
+            var placeLetter = document.getElementById("letterSpace" + i);
+            console.log(placeLetter);
+            placeLetter.value = wordArray[i];
+            charsToWin--;
 
-          var placeLetter = document.getElementById("letterSpace" + i);
-          console.log(placeLetter);
-          placeLetter.value = wordArray[i];
+          }
 
-          
         }
+
+        lettersGuessed.push(userGuess);
       }
 
-      //use that to change divs for revealed letters
-      // for(var y = 0; i<indices.length; i++)
-      // {
+      //when player wins
+      if (charsToWin <= 0) {
 
-      //   var placeLetter = document.getElementById("letterSpace" + y);
-      //   placeLetter.textContent = wordArray[indices[i]];
-      //   console.log(wordArray[indices[i]]);
-      //   $holder.appendChild(placeLetter);
+        alert("you win");
+        wins++;
+        gameWon();
+        resetGame = true;
+        gameOn = false;
 
-      // }
+      }
 
+
+    } //only charge tries for unique guesses
+    else if (!lettersGuessed.includes(userGuess)) {
+
+      tries--;
+
+      document.getElementById("triesBox").value = "Tries: " + tries;
+
+      lettersGuessed.push(userGuess); //add key to array so it cannot be guessed again
+
+      if (tries <= 0) { //reset the game
+        losses++;
+        gameLost();
+        resetGame = true;
+        gameOn = false;
+      }
 
     }
 
   }
 
+  function gameWon(){
+
+document.getElementById("winsBox").value = "Wins: " + wins;
+
+  }
+
+  function gameLost(){
+
+    document.getElementById("lossesBox").value = "Losses: " + losses;
+    
+      }
+
   if (!gameOn) {
+
+    //reset the board
+
+    if (resetGame) {
+
+      $holder.innerHTML = ""; //purge old stuff
+      $game.innerHTML = "";
+
+
+      console.log("clean");
+      lettersGuessed = []; //clear for new guesses
+      wordArray = [];
+      resetGame = false;
+
+    }
 
     //first key press sets the word to be used
 
-    //word = wordPool[Math.floor(Math.random() * wordPool.length)];   //disabled for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    word = wordPool[Math.floor(Math.random() * wordPool.length)];   //disabled for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    charsToWin = word.length;
 
     //set the blank word segment
-
-    //var $game = document.getElementById("game");
 
     for (var i = 0; i < word.length; i++) {
 
@@ -83,6 +130,7 @@ document.onkeyup = function (event) {
       console.log(wordArray);
     }
 
+    tries = 5;
     gameOn = true;
 
   }
