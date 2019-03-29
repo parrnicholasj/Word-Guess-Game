@@ -15,7 +15,7 @@ document.onkeyup = function (event) {
   if (gameOn) {
 
     userGuess = event.key.toLowerCase(); //set to lower case so no capitals problem
-    console.log(userGuess);
+
 
     lettersGuessed.push(userGuess); //add key to array
 
@@ -29,7 +29,35 @@ document.onkeyup = function (event) {
     $game.appendChild(newDiv); //add on to what letters were guess
 
     //check if correct letter chosen
+    if (word.includes(userGuess)) {
 
+      //get indexes of where the characters are
+
+      for (var i = 0; i < wordArray.length; i++) {
+
+        if (wordArray[i] === userGuess) {
+
+          var placeLetter = document.getElementById("letterSpace" + i);
+          console.log(placeLetter);
+          placeLetter.value = wordArray[i];
+
+          
+        }
+      }
+
+      //use that to change divs for revealed letters
+      // for(var y = 0; i<indices.length; i++)
+      // {
+
+      //   var placeLetter = document.getElementById("letterSpace" + y);
+      //   placeLetter.textContent = wordArray[indices[i]];
+      //   console.log(wordArray[indices[i]]);
+      //   $holder.appendChild(placeLetter);
+
+      // }
+
+
+    }
 
   }
 
@@ -47,9 +75,9 @@ document.onkeyup = function (event) {
 
       wordArray.push(word.charAt(i));
 
-      var blankSpan = document.createElement("span");
-      blankSpan.setAttribute("class", "letterSpace");
-      blankSpan.textContent = "-";
+      var blankSpan = document.createElement("input");
+      blankSpan.setAttribute("id", "letterSpace" + i);
+      blankSpan.value = "-";
       $holder.appendChild(blankSpan);
 
       console.log(wordArray);
